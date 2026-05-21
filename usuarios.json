@@ -1,0 +1,31 @@
+[ {
+  "id" : 1,
+  "nombre" : "Prueba Directa",
+  "correo" : "prueba@directa.com",
+  "password" : "123456"
+}, {
+  "id" : 2,
+  "nombre" : "Daniela",
+  "correo" : "daniela@gmail.com",
+  "password" : "2006"
+}, {
+  "id" : 3,
+  "nombre" : "Usuario Test",
+  "correo" : "test@test.com",
+  "password" : "123456"
+}, {
+  "id" : 4,
+  "nombre" : "jose",
+  "correo" : "jose@gmail.com",
+  "password" : "2727"
+}, {
+  "id" : 6,
+  "nombre" : "kate",
+  "correo" : "kate@gmail.com",
+  "password" : "3232"
+}, {
+  "id" : 7,
+  "nombre" : "santiago",
+  "correo" : "santiago@gmail.com",
+  "password" : "2004"
+} ]

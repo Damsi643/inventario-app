@@ -1,109 +1,119 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-background:#0F172A;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+body {
+    background: #0F172A;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.register-container{
-width:100%;
-padding:20px;
-display:flex;
-justify-content:center;
-align-items:center;
+/* CONTENEDOR GENERAL */
+.register-container {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.register-box{
-width:420px;
-background:white;
-padding:40px;
-border-radius:25px;
-text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,.3);
+/* CAJA PRINCIPAL (REDUCIDA Y MÁS PRO) */
+.register-box {
+    width: 360px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
 }
 
-.user-icon i{
-font-size:90px;
-color:#2563eb;
-margin-bottom:10px;
+/* ICONO */
+.user-icon i {
+    font-size: 75px;
+    color: #2563eb;
+    margin-bottom: 10px;
 }
 
-.logo{
-font-size:32px;
-font-weight:700;
-color:#0F172A;
-margin-bottom:10px;
+/* LOGO */
+.logo {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 10px;
 }
 
-h2{
-font-size:22px;
-font-weight:500;
-color:#475569;
-margin-bottom:30px;
+/* TITULO */
+h2 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 25px;
 }
 
-.input-box{
-height:55px;
-border:1px solid #cbd5e1;
-border-radius:14px;
-display:flex;
-align-items:center;
-padding:0 15px;
-margin-bottom:20px;
-background:#f8fafc;
+/* INPUTS */
+.input-box {
+    height: 48px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    margin-bottom: 15px;
+    background: #f8fafc;
 }
 
-.input-box i{
-font-size:20px;
-color:#64748b;
-margin-right:10px;
+.input-box i {
+    font-size: 18px;
+    color: #64748b;
+    margin-right: 10px;
 }
 
-.input-box input{
-width:100%;
-border:none;
-outline:none;
-background:transparent;
-font-size:15px;
+.input-box input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
 }
 
-.register-btn{
-width:100%;
-height:55px;
-border:none;
-border-radius:14px;
-background:#2563eb;
-color:white;
-font-size:17px;
-font-weight:600;
-transition:.3s;
+/* BOTÓN */
+.register-btn {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 12px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    transition: .3s;
+    cursor: pointer;
 }
 
-.register-btn:hover{
-background:#1d4ed8;
+.register-btn:hover {
+    background: #1d4ed8;
 }
 
-.login-text{
-margin-top:25px;
-color:#475569;
+/* TEXTO LOGIN */
+.login-text {
+    margin-top: 20px;
+    color: #475569;
+    font-size: 14px;
 }
 
-.login-text a{
-color:#2563eb;
-text-decoration:none;
-font-weight:600;
+.login-text a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
 }
 
-.login-text a:hover{
-text-decoration:underline;
+.login-text a:hover {
+    text-decoration: underline;
 }

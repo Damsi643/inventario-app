@@ -1,0 +1,136 @@
+body{
+    background: #F1FCFF;
+    font-family: Arial;
+}
+
+/* NAVBAR */
+
+.logo{
+    font-weight: bold;
+    color: #222;
+}
+
+.search-box{
+    background: #F1FCFF;
+    padding: 10px 15px;
+    border-radius: 12px;
+    width: 320px;
+}
+
+.search-box input{
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 90%;
+}
+
+.nav-icon{
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.cart-icon{
+    position: relative;
+}
+
+.cart-badge{
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: #0099cc;
+    color: white;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 50%;
+}
+
+/* HERO */
+
+.catalogo-hero{
+    padding: 80px 0;
+    text-align: center;
+}
+
+.catalogo-hero h1{
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.catalogo-hero p{
+    color: gray;
+    margin-top: 15px;
+}
+
+/* TITULO */
+
+.section-title{
+    font-weight: bold;
+}
+
+/* BOTON FILTRO */
+
+.filter-btn{
+    border: none;
+    background: #A8DFFA;
+    padding: 10px 18px;
+    border-radius: 12px;
+}
+
+/* PRODUCTOS */
+
+.products-section{
+    padding-bottom: 80px;
+}
+
+.product-card{
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    transition: .3s;
+}
+
+.product-card:hover{
+    transform: translateY(-5px);
+}
+
+.product-card img{
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+
+.product-info{
+    padding: 20px;
+}
+
+.category{
+    color: gray;
+    font-size: 14px;
+}
+
+.price{
+    color: #0099cc;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.cart-btn{
+    width: 100%;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    background: #A8DFFA;
+    margin-top: 15px;
+    transition: .3s;
+}
+
+.cart-btn:hover{
+    background: #8ed3f7;
+}
+
+/* FOOTER */
+
+.footer{
+    background: white;
+    padding: 25px;
+}

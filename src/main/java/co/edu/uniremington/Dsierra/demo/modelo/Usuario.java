@@ -1,33 +1,28 @@
 package co.edu.uniremington.Dsierra.demo.modelo;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name ="usuarios")
-
-@Setter
+@Table(name = "usuarios")
 @Getter
+@Setter
 @NoArgsConstructor
-
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_usuario;
+    @Column(name = "id_usuario")  // ← Esta es la corrección clave
+    private Long id;
 
+    @Column(name = "nombre")
     private String nombre;
 
-    @Column(unique = true)
+    @Column(name = "correo", unique = true, nullable = false)
     private String correo;
 
+    @Column(name = "password", nullable = false)
     private String password;
 }
