@@ -29,20 +29,26 @@
 
 <h2>Iniciar sesión</h2>
 
-<form>
+<!-- Mensaje de error -->
+<div id="error-message" class="alert alert-danger" style="display: none;">
+    <i class="bi bi-exclamation-triangle"></i> Correo o contraseña incorrectos
+</div>
+
+<!-- FORMULARIO CORREGIDO -->
+<form action="/login" method="post">
 
 <div class="input-box">
 <i class="bi bi-envelope"></i>
-<input type="email" placeholder="Correo electrónico">
+<input type="email" name="correo" placeholder="Correo electrónico" required>
 </div>
 
 <div class="input-box">
 <i class="bi bi-lock"></i>
-<input type="password" placeholder="Contraseña">
+<input type="password" name="password" placeholder="Contraseña" required>
 </div>
 
 <button type="submit" class="login-btn">
-Iniciar sesión
+    <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
 </button>
 
 <p class="register-text">
@@ -55,6 +61,18 @@ Iniciar sesión
 </div>
 
 </div>
+
+<script>
+    // Mostrar mensaje de error si viene en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+        const errorDiv = document.getElementById('error-message');
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+</script>
 
 </body>
 </html>

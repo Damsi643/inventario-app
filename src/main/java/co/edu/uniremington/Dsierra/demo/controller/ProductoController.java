@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class ProductoController {
     public ProductoController(ProductoService productoService) {
         this.productoService = productoService;
     }
+
+    // ========== API REST ==========
 
     // LISTAR TODOS
     @Operation(summary = "Listar todos los productos")

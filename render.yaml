@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: inventario-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: MYSQL_HOST
+        fromDatabase:
+          name: inventario-db
+          property: host
+      - key: MYSQL_PORT
+        fromDatabase:
+          name: inventario-db
+          property: port
+      - key: MYSQL_DATABASE
+        fromDatabase:
+          name: inventario-db
+          property: database
+      - key: MYSQLUSER
+        fromDatabase:
+          name: inventario-db
+          property: user
+      - key: MYSQLPASSWORD
+        fromDatabase:
+          name: inventario-db
+          property: password
+      - key: MYSQL_SSL
+        value: "true"
+
+databases:
+  - name: inventario-db
+    databaseName: db_inventario
+    region: ohio
+    plan: free
