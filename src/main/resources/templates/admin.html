@@ -101,11 +101,16 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.m
 
 </div>
 
-<div class="bottom-box">
+                <div class="bottom-box">
 
 <h4>DJK Electronics</h4>
 
 <p>Tecnología que conecta</p>
+
+<a href="/logout" class="logout-btn">
+<i class="bi bi-box-arrow-right"></i>
+Cerrar sesión
+</a>
 
 </div>
 
@@ -266,9 +271,6 @@ function cargarUsuarios() {
                             </span>
                         </td>
                         <td>
-                            <button class="edit" onclick="editarUsuario(${usuario.id})">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
                             <button class="delete" onclick="eliminarUsuario(${usuario.id})">
                                 <i class="bi bi-trash"></i>
                             </button>

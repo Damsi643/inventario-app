@@ -46,6 +46,9 @@ public class ProductoService {
 
         producto.setNombre(nuevoProducto.getNombre());
         producto.setValor(nuevoProducto.getValor());
+        if (nuevoProducto.getFoto() != null) {
+            producto.setFoto(nuevoProducto.getFoto());
+        }
 
         return productos.save(producto);
     }

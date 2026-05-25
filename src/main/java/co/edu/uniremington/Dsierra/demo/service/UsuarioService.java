@@ -35,6 +35,15 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
     
+    public boolean eliminar(Long id) {
+        if (usuarioRepository.existsById(id)) {
+            usuarioRepository.deleteById(id);
+            log.info("✅ Usuario eliminado - ID: {}", id);
+            return true;
+        }
+        return false;
+    }
+
     public String getEstadisticas() {
         long bdCount = usuarioRepository.count();
         long jsonCount = backupService.contarUsuariosEnJson();

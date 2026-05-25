@@ -82,6 +82,28 @@ font-size:13px;
 color:#64748b;
 }
 
+.logout-btn{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+margin-top:15px;
+padding:10px;
+border-radius:12px;
+background:#fee2e2;
+color:#ef4444;
+text-decoration:none;
+font-size:14px;
+font-weight:500;
+transition:all .3s ease;
+}
+
+.logout-btn:hover{
+background:#fecaca;
+color:#dc2626;
+transform:translateY(-2px);
+}
+
 .main-content{
 flex:1;
 padding:30px;

@@ -38,8 +38,8 @@ public class LoginController {
             session.setAttribute("usuario", usuario);
             
             // Verificar si es admin (por correo)
-            if (correo.equals("admin@gmail.com") || correo.equals("admin@djk.com")) {
-                return "redirect:/admin";
+            if (correo.equals("admin@gmail.com")) {
+                return "redirect:/dashboard";
             } else {
                 // Usuario normal → redirigir al catálogo
                 return "redirect:/catalogo";

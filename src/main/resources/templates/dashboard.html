@@ -33,42 +33,64 @@ href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.m
 
 </div>
 
-<ul class="menu">
+                <ul class="menu">
 
 <li class="active">
-<i class="bi bi-grid-fill"></i>
-<span>Dashboard</span>
+    <a href="/dashboard">
+        <i class="bi bi-grid-fill"></i>
+        <span>Dashboard</span>
+    </a>
 </li>
 
 <li>
-<i class="bi bi-box-seam"></i>
-<span>Productos</span>
+    <a href="/productos">
+        <i class="bi bi-box-seam"></i>
+        <span>Productos</span>
+    </a>
 </li>
 
 <li>
-<i class="bi bi-tags"></i>
-<span>Categorías</span>
+    <a href="/categorias">
+        <i class="bi bi-tags"></i>
+        <span>Categorías</span>
+    </a>
 </li>
 
 <li>
-<i class="bi bi-cart3"></i>
-<span>Ventas</span>
+    <a href="/ventas">
+        <i class="bi bi-cart3"></i>
+        <span>Ventas</span>
+    </a>
 </li>
 
 <li>
-<i class="bi bi-boxes"></i>
-<span>Stock</span>
+    <a href="/admin">
+        <i class="bi bi-people"></i>
+        <span>Administradores</span>
+    </a>
+</li>
+
+<li>
+    <a href="/stock">
+        <i class="bi bi-boxes"></i>
+        <span>Stock</span>
+    </a>
 </li>
 
 </ul>
 
 </div>
 
-<div class="bottom-box">
+                <div class="bottom-box">
 
 <h4>DJK Electronics</h4>
 
 <p>Tecnología que conecta</p>
+
+<a href="/logout" class="logout-btn">
+<i class="bi bi-box-arrow-right"></i>
+Cerrar sesión
+</a>
 
 </div>
 
@@ -175,20 +197,23 @@ name="stock"
 placeholder="Stock"
 required>
 
-<input type="text"
+                <input type="file"
 id="foto"
 name="foto"
-placeholder="URL de la imagen"
-required>
+accept="image/*">
 
 </div>
 
-<button type="submit" class="btn-save">
-
+                <div class="form-actions">
+<button type="submit" class="btn-save" id="btnGuardar">
 <i class="bi bi-save"></i>
-Guardar Producto
-
+<span id="btnGuardarTexto">Guardar Producto</span>
 </button>
+<button type="button" class="btn-cancel" id="btnCancelar" onclick="cancelarEdicion()" style="display:none;">
+<i class="bi bi-x-circle"></i>
+Cancelar
+</button>
+</div>
 
 </form>
 
@@ -246,6 +271,10 @@ Guardar Producto
 const API_URL = "http://localhost:8081/api/productos";
 const tabla = document.getElementById("tabla-productos");
 const form = document.getElementById("formProducto");
+const btnGuardarTexto = document.getElementById("btnGuardarTexto");
+const btnCancelar = document.getElementById("btnCancelar");
+
+let editandoId = null;
 
 // Cargar productos al iniciar
 cargarProductos();
@@ -317,37 +346,96 @@ function actualizarEstadisticas(productos) {
     document.getElementById("totalCategorias").innerText = categorias.size;
 }
 
-// Guardar producto
-form.addEventListener("submit", function(e) {
+// Guardar o actualizar producto
+const UPLOAD_URL = "http://localhost:8081/api/upload";
+let editandoFoto = "";
+
+form.addEventListener("submit", async function(e) {
     e.preventDefault();
-    
+
+    const fileInput = document.getElementById("foto");
+    const file = fileInput.files[0];
+    let fotoUrl = editandoFoto;
+
+    if (file) {
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            const res = await fetch(UPLOAD_URL, { method: "POST", body: fd });
+            const data = await res.json();
+            fotoUrl = data.url;
+        } catch (err) {
+            mostrarMensaje("Error al subir la imagen", "error");
+            return;
+        }
+    }
+
     const producto = {
         nombre: document.getElementById("nombre").value,
         marca: document.getElementById("marca").value,
         descripcion: document.getElementById("descripcion").value,
         precio: parseFloat(document.getElementById("precio").value),
         stock: parseInt(document.getElementById("stock").value),
-        foto: document.getElementById("foto").value
+        foto: fotoUrl || ""
     };
-    
-    fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(producto)
-    })
-    .then(response => response.json())
-    .then(data => {
-        form.reset();
-        cargarProductos();
-        mostrarMensaje("Producto guardado exitosamente", "success");
-    })
-    .catch(error => {
-        console.error("Error al guardar:", error);
-        mostrarMensaje("Error al guardar el producto", "error");
-    });
+
+    if (editandoId) {
+        fetch(`${API_URL}/${editandoId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(producto)
+        })
+        .then(response => response.json())
+        .then(() => {
+            cancelarEdicion();
+            cargarProductos();
+            mostrarMensaje("Producto actualizado exitosamente", "success");
+        })
+        .catch(() => mostrarMensaje("Error al actualizar el producto", "error"));
+    } else {
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(producto)
+        })
+        .then(response => response.json())
+        .then(() => {
+            form.reset();
+            editandoFoto = "";
+            cargarProductos();
+            mostrarMensaje("Producto guardado exitosamente", "success");
+        })
+        .catch(() => mostrarMensaje("Error al guardar el producto", "error"));
+    }
 });
+
+function editarProducto(id) {
+    fetch(`${API_URL}/${id}`)
+        .then(response => response.json())
+        .then(producto => {
+            document.getElementById("nombre").value = producto.nombre;
+            document.getElementById("marca").value = producto.marca || '';
+            document.getElementById("descripcion").value = producto.descripcion || '';
+            document.getElementById("precio").value = producto.precio;
+            document.getElementById("stock").value = producto.stock;
+            editandoFoto = producto.foto || '';
+
+            editandoId = id;
+            btnGuardarTexto.innerText = "Actualizar Producto";
+            btnCancelar.style.display = "flex";
+            document.getElementById("foto").required = false;
+        })
+        .catch(() => mostrarMensaje("Error al cargar datos del producto", "error"));
+}
+
+function cancelarEdicion() {
+    form.reset();
+    editandoId = null;
+    editandoFoto = "";
+    btnGuardarTexto.innerText = "Guardar Producto";
+    btnCancelar.style.display = "none";
+    document.getElementById("foto").required = false;
+}
 
 // Eliminar producto
 function eliminarProducto(id) {
@@ -364,12 +452,6 @@ function eliminarProducto(id) {
             mostrarMensaje("Error al eliminar el producto", "error");
         });
     }
-}
-
-// Editar producto (para implementar después)
-function editarProducto(id) {
-    alert("Funcionalidad de edición próximamente");
-    // Aquí puedes implementar la edición
 }
 
 // Mostrar mensajes temporales

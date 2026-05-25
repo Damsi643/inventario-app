@@ -1,5 +1,6 @@
 package co.edu.uniremington.Dsierra.demo.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +19,8 @@ public class Producto {
     @Id
      @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nombre; 
+    private String nombre;
     private float valor;
+    @Column(length = 500)
+    private String foto;
 }
