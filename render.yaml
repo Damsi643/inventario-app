@@ -5,30 +5,14 @@ services:
     dockerfilePath: ./Dockerfile
     envVars:
       - key: MYSQL_HOST
-        fromDatabase:
-          name: inventario-db
-          property: host
+        value: "kodama.proxy.rlwy.net"
       - key: MYSQL_PORT
-        fromDatabase:
-          name: inventario-db
-          property: port
+        value: "40247"
       - key: MYSQL_DATABASE
-        fromDatabase:
-          name: inventario-db
-          property: database
+        value: "railway"
       - key: MYSQLUSER
-        fromDatabase:
-          name: inventario-db
-          property: user
+        value: "root"
       - key: MYSQLPASSWORD
-        fromDatabase:
-          name: inventario-db
-          property: password
+        value: "IjDdTdBqyzXfNxLyycYPZhbTBAsGCJnH"
       - key: MYSQL_SSL
         value: "true"
-
-databases:
-  - name: inventario-db
-    databaseName: db_inventario
-    region: ohio
-    plan: free
