@@ -400,6 +400,7 @@ td {
     object-fit: cover;
     border-radius: 10px;
     border: 1px solid #dbeafe;
+    background: #f8fafc;
 }
 
 .precio {

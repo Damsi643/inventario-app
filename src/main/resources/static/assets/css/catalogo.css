@@ -1,39 +1,38 @@
-body{
+body {
     background: #F1FCFF;
-    font-family: Arial;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* NAVBAR */
-
-.logo{
+.logo {
     font-weight: bold;
     color: #222;
 }
 
-.search-box{
+.search-box {
     background: #F1FCFF;
     padding: 10px 15px;
     border-radius: 12px;
     width: 320px;
 }
 
-.search-box input{
+.search-box input {
     border: none;
     background: transparent;
     outline: none;
     width: 90%;
 }
 
-.nav-icon{
+.nav-icon {
     font-size: 22px;
     cursor: pointer;
 }
 
-.cart-icon{
+.cart-icon {
     position: relative;
 }
 
-.cart-badge{
+.cart-badge {
     position: absolute;
     top: -8px;
     right: -10px;
@@ -45,31 +44,28 @@ body{
 }
 
 /* HERO */
-
-.catalogo-hero{
+.catalogo-hero {
     padding: 80px 0;
     text-align: center;
 }
 
-.catalogo-hero h1{
+.catalogo-hero h1 {
     font-size: 50px;
     font-weight: bold;
 }
 
-.catalogo-hero p{
+.catalogo-hero p {
     color: gray;
     margin-top: 15px;
 }
 
 /* TITULO */
-
-.section-title{
+.section-title {
     font-weight: bold;
 }
 
 /* BOTON FILTRO */
-
-.filter-btn{
+.filter-btn {
     border: none;
     background: #A8DFFA;
     padding: 10px 18px;
@@ -77,44 +73,45 @@ body{
 }
 
 /* PRODUCTOS */
-
-.products-section{
+.products-section {
     padding-bottom: 80px;
 }
 
-.product-card{
+.product-card {
     background: white;
     border-radius: 25px;
     overflow: hidden;
     transition: .3s;
+    height: 100%;
 }
 
-.product-card:hover{
+.product-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.product-card img{
+.product-card img {
     width: 100%;
     height: 240px;
     object-fit: cover;
 }
 
-.product-info{
+.product-info {
     padding: 20px;
 }
 
-.category{
+.category {
     color: gray;
     font-size: 14px;
 }
 
-.price{
+.price {
     color: #0099cc;
     font-size: 24px;
     font-weight: bold;
 }
 
-.cart-btn{
+.cart-btn {
     width: 100%;
     border: none;
     padding: 12px;
@@ -124,13 +121,33 @@ body{
     transition: .3s;
 }
 
-.cart-btn:hover{
+.cart-btn:hover {
     background: #8ed3f7;
 }
 
 /* FOOTER */
-
-.footer{
+.footer {
     background: white;
     padding: 25px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .search-box {
+        width: 200px;
+    }
+    
+    .catalogo-hero h1 {
+        font-size: 32px;
+    }
+    
+    .catalogo-hero {
+        padding: 40px 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .search-box {
+        display: none;
+    }
 }

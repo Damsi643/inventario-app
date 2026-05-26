@@ -40,7 +40,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'Mouse Gamer','Logitech','Mouse gamer con luces RGB',150000,10,NULL);
+INSERT INTO `productos` (`id`, `nombre`, `marca`, `descripcion`, `precio`, `stock`, `foto`) VALUES (1,'Mouse Gamer','Logitech','Mouse gamer con luces RGB',150000,10,NULL);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

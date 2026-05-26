@@ -14,8 +14,8 @@
 <link rel="stylesheet"
 href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-<!-- CSS (Spring Boot static) -->
-<link rel="stylesheet" href="/css/catalogo.css">
+<!-- CSS -->
+<link rel="stylesheet" href="/assets/css/catalogo.css">
 
 </head>
 
@@ -70,7 +70,7 @@ data-bs-target="#menu">
 <!-- SEARCH -->
 <div class="search-box">
 <i class="bi bi-search"></i>
-<input type="text" placeholder="Buscar productos...">
+<input type="text" id="buscador" placeholder="Buscar productos...">
 </div>
 
 <!-- ICONOS -->
@@ -115,9 +115,9 @@ Descubre productos tecnológicos y electrodomésticos modernos para tu hogar
 
 <h2 class="section-title">Productos disponibles</h2>
 
-<button class="filter-btn">
-<i class="bi bi-funnel"></i>
-Filtros
+<button class="filter-btn" onclick="cargarProductos()">
+<i class="bi bi-arrow-repeat"></i>
+Actualizar
 </button>
 
 </div>
@@ -146,7 +146,160 @@ Filtros
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- JS -->
-<script src="/assets/js/catalogo.js"></script>
+<script>
+
+const API_URL = "/api/productos";
+let productosGlobal = [];
+
+document.addEventListener("DOMContentLoaded", function() {
+    cargarProductos();
+    
+    // Buscador en tiempo real
+    const buscador = document.getElementById("buscador");
+    if (buscador) {
+        buscador.addEventListener("input", function(e) {
+            filtrarProductos(e.target.value);
+        });
+    }
+});
+
+async function cargarProductos() {
+    try {
+        const response = await fetch(API_URL);
+        productosGlobal = await response.json();
+        mostrarProductos(productosGlobal);
+    } catch (error) {
+        console.error("Error al cargar productos:", error);
+        mostrarError();
+    }
+}
+
+function filtrarProductos(texto) {
+    if (!texto.trim()) {
+        mostrarProductos(productosGlobal);
+        return;
+    }
+    
+    const filtrados = productosGlobal.filter(producto => 
+        producto.nombre.toLowerCase().includes(texto.toLowerCase()) ||
+        (producto.marca && producto.marca.toLowerCase().includes(texto.toLowerCase())) ||
+        (producto.descripcion && producto.descripcion.toLowerCase().includes(texto.toLowerCase()))
+    );
+    
+    mostrarProductos(filtrados);
+}
+
+function mostrarProductos(productos) {
+    const contenedor = document.getElementById("contenedor-productos");
+    
+    if (!contenedor) return;
+    
+    if (productos.length === 0) {
+        contenedor.innerHTML = `
+            <div class="col-12 text-center">
+                <p>No hay productos disponibles</p>
+            </div>
+        `;
+        return;
+    }
+    
+    contenedor.innerHTML = "";
+    
+    productos.forEach(producto => {
+        // 🔥 CORREGIDO: Usar la URL correcta para tu backend
+        let imagenUrl = 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Sin+Imagen';
+        
+        if (producto.foto && producto.foto.trim() !== '') {
+            if (producto.foto.startsWith('http')) {
+                imagenUrl = producto.foto;
+            } else if (producto.foto.includes('/api/uploads/')) {
+                imagenUrl = producto.foto;
+            } else {
+                imagenUrl = '/api/uploads/' + producto.foto;
+            }
+        }
+        
+        const col = document.createElement("div");
+        col.className = "col-md-6 col-lg-4 col-xl-3";
+        col.innerHTML = `
+            <div class="product-card">
+                <div class="product-image" style="position: relative;">
+                    <img src="${imagenUrl}" 
+                         alt="${escapeHtml(producto.nombre)}"
+                         style="width: 100%; height: 240px; object-fit: cover;"
+                         onerror="this.src='https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Imagen+no+disponible'">
+                    <button class="favorite-btn" style="position: absolute; top: 10px; right: 10px; background: white; border: none; border-radius: 50%; width: 35px; height: 35px; cursor: pointer;">
+                        <i class="bi bi-heart"></i>
+                    </button>
+                </div>
+                <div class="product-info" style="padding: 20px;">
+                    <h3 class="product-title" style="font-size: 18px; margin-bottom: 10px;">${escapeHtml(producto.nombre)}</h3>
+                    <p class="product-brand" style="color: gray; margin: 5px 0;">${escapeHtml(producto.marca || 'Sin marca')}</p>
+                    <p class="product-description" style="font-size: 14px; color: #666; margin: 10px 0;">${escapeHtml((producto.descripcion || '').substring(0, 100))}${producto.descripcion && producto.descripcion.length > 100 ? '...' : ''}</p>
+                    <div class="product-price" style="font-size: 24px; font-weight: bold; color: #0099cc; margin: 10px 0;">
+                        $${Number(producto.precio).toLocaleString()}
+                    </div>
+                    <div class="product-stock" style="font-size: 13px; color: #666; margin-bottom: 10px;">
+                        <i class="bi bi-box"></i> Stock: ${producto.stock} unidades
+                    </div>
+                    <button class="cart-btn" onclick="agregarAlCarrito(${producto.id}, '${escapeHtml(producto.nombre)}')" style="width: 100%; border: none; padding: 12px; border-radius: 12px; background: #A8DFFA; transition: .3s; cursor: pointer;">
+                        <i class="bi bi-cart-plus"></i> Agregar al carrito
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        contenedor.appendChild(col);
+    });
+}
+
+function mostrarError() {
+    const contenedor = document.getElementById("contenedor-productos");
+    if (contenedor) {
+        contenedor.innerHTML = `
+            <div class="col-12 text-center text-danger">
+                <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                <p>Error al cargar los productos. Por favor, recarga la página.</p>
+            </div>
+        `;
+    }
+}
+
+function agregarAlCarrito(productoId, nombre) {
+    console.log("Agregar al carrito:", productoId, nombre);
+    const badge = document.querySelector('.cart-badge');
+    if (badge) {
+        let count = parseInt(badge.innerText) || 0;
+        badge.innerText = count + 1;
+    }
+    mostrarNotificacion(`"${nombre}" agregado al carrito`);
+}
+
+function mostrarNotificacion(mensaje) {
+    const notificacion = document.createElement("div");
+    notificacion.className = "alert alert-success alert-dismissible fade show";
+    notificacion.style.position = "fixed";
+    notificacion.style.top = "20px";
+    notificacion.style.right = "20px";
+    notificacion.style.zIndex = "9999";
+    notificacion.innerHTML = `
+        <i class="bi bi-check-circle"></i> ${mensaje}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notificacion);
+    
+    setTimeout(() => {
+        notificacion.remove();
+    }, 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+</script>
 
 </body>
 

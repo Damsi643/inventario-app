@@ -230,7 +230,7 @@ Cancelar
 
 <div class="table-responsive">
 
-<table>
+<table class="table">
 
 <thead>
 
@@ -269,27 +269,28 @@ Cancelar
 <script>
 
 const API_URL = "/api/productos";
+const UPLOAD_URL = "/api/upload";
 const tabla = document.getElementById("tabla-productos");
 const form = document.getElementById("formProducto");
 const btnGuardarTexto = document.getElementById("btnGuardarTexto");
 const btnCancelar = document.getElementById("btnCancelar");
 
 let editandoId = null;
+let editandoFoto = "";
 
 // Cargar productos al iniciar
 cargarProductos();
 
-function cargarProductos() {
-    fetch(API_URL)
-        .then(response => response.json())
-        .then(productos => {
-            mostrarProductos(productos);
-            actualizarEstadisticas(productos);
-        })
-        .catch(error => {
-            console.error("Error al cargar productos:", error);
-            tabla.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error al cargar productos</td></tr>`;
-        });
+async function cargarProductos() {
+    try {
+        const response = await fetch(API_URL);
+        const productos = await response.json();
+        mostrarProductos(productos);
+        actualizarEstadisticas(productos);
+    } catch (error) {
+        console.error("Error al cargar productos:", error);
+        tabla.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error al cargar productos</td></tr>`;
+    }
 }
 
 function mostrarProductos(productos) {
@@ -303,16 +304,34 @@ function mostrarProductos(productos) {
     productos.forEach(producto => {
         const row = document.createElement("tr");
         
+        // 🔥 CORREGIDO: Usar la URL correcta para tu backend
+        let imagenUrl = 'https://via.placeholder.com/50/4F46E5/FFFFFF?text=No+Image';
+        
+        if (producto.foto && producto.foto.trim() !== '') {
+            // Si ya tiene la URL completa de tu API
+            if (producto.foto.startsWith('http')) {
+                imagenUrl = producto.foto;
+            } 
+            // Si tiene /api/uploads/ (tu endpoint)
+            else if (producto.foto.includes('/api/uploads/')) {
+                imagenUrl = producto.foto;
+            }
+            // Si solo tiene el nombre del archivo
+            else {
+                imagenUrl = '/api/uploads/' + producto.foto;
+            }
+        }
+        
         row.innerHTML = `
             <td>
-                <img src="${producto.foto || 'https://via.placeholder.com/50'}" 
+                <img src="${imagenUrl}" 
                      class="img-producto" 
                      alt="${producto.nombre}"
-                     onerror="this.src='https://via.placeholder.com/50'">
+                     onerror="this.src='https://via.placeholder.com/50/4F46E5/FFFFFF?text=Error'">
             </td>
-            <td><strong>${producto.nombre}</strong></td>
-            <td>${producto.marca || '-'}</td>
-            <td>${producto.descripcion || '-'}</td>
+            <td><strong>${escapeHtml(producto.nombre)}</strong></td>
+            <td>${escapeHtml(producto.marca || '-')}</td>
+            <td>${escapeHtml(producto.descripcion || '-')}</td>
             <td class="precio">$${Number(producto.precio).toLocaleString()}</td>
             <td><span class="stock">${producto.stock} unidades</span></td>
             <td>
@@ -330,26 +349,21 @@ function mostrarProductos(productos) {
 }
 
 function actualizarEstadisticas(productos) {
-    // Total de productos
     document.getElementById("totalProductos").innerText = productos.length;
     
-    // Stock total
     let stockTotal = 0;
-    const categorias = new Set();
+    const marcas = new Set();
     
     productos.forEach(producto => {
         stockTotal += producto.stock || 0;
-        if (producto.marca) categorias.add(producto.marca);
+        if (producto.marca) marcas.add(producto.marca);
     });
     
     document.getElementById("stockTotal").innerText = stockTotal;
-    document.getElementById("totalCategorias").innerText = categorias.size;
+    document.getElementById("totalCategorias").innerText = marcas.size;
 }
 
 // Guardar o actualizar producto
-const UPLOAD_URL = "/api/upload";
-let editandoFoto = "";
-
 form.addEventListener("submit", async function(e) {
     e.preventDefault();
 
@@ -357,14 +371,26 @@ form.addEventListener("submit", async function(e) {
     const file = fileInput.files[0];
     let fotoUrl = editandoFoto;
 
+    // Si hay una imagen nueva para subir
     if (file) {
         try {
             const fd = new FormData();
             fd.append("file", file);
-            const res = await fetch(UPLOAD_URL, { method: "POST", body: fd });
+            
+            const res = await fetch(UPLOAD_URL, { 
+                method: "POST", 
+                body: fd 
+            });
+            
+            if (!res.ok) throw new Error("Error al subir imagen");
+            
             const data = await res.json();
+            // Tu backend devuelve la URL completa
             fotoUrl = data.url;
+            
+            console.log("Imagen subida exitosamente:", fotoUrl);
         } catch (err) {
+            console.error("Error al subir imagen:", err);
             mostrarMensaje("Error al subir la imagen", "error");
             return;
         }
@@ -379,43 +405,39 @@ form.addEventListener("submit", async function(e) {
         foto: fotoUrl || ""
     };
 
-    if (editandoId) {
-        fetch(`${API_URL}/${editandoId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(producto)
-        })
-        .then(response => response.json())
-        .then(() => {
+    try {
+        if (editandoId) {
+            const response = await fetch(`${API_URL}/${editandoId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(producto)
+            });
+            
+            if (!response.ok) throw new Error("Error al actualizar");
+            
             cancelarEdicion();
-            cargarProductos();
+            await cargarProductos();
             mostrarMensaje("Producto actualizado exitosamente", "success");
-        })
-        .catch(() => mostrarMensaje("Error al actualizar el producto", "error"));
-    } else {
-        fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(producto)
-        })
-        .then(async response => {
+        } else {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(producto)
+            });
+            
             if (!response.ok) {
                 const text = await response.text();
-                console.error("POST /api/productos falló - Status:", response.status, "Body:", text.substring(0, 200));
-                throw new Error("HTTP " + response.status);
+                throw new Error(`HTTP ${response.status}: ${text}`);
             }
-            return response.json();
-        })
-        .then(() => {
+            
             form.reset();
             editandoFoto = "";
-            cargarProductos();
+            await cargarProductos();
             mostrarMensaje("Producto guardado exitosamente", "success");
-        })
-        .catch(err => {
-            console.error("Error al guardar producto:", err.message);
-            mostrarMensaje("Error al guardar el producto", "error");
-        });
+        }
+    } catch (error) {
+        console.error("Error al guardar producto:", error);
+        mostrarMensaje("Error al guardar el producto: " + error.message, "error");
     }
 });
 
@@ -433,7 +455,6 @@ function editarProducto(id) {
             editandoId = id;
             btnGuardarTexto.innerText = "Actualizar Producto";
             btnCancelar.style.display = "flex";
-            document.getElementById("foto").required = false;
         })
         .catch(() => mostrarMensaje("Error al cargar datos del producto", "error"));
 }
@@ -444,27 +465,27 @@ function cancelarEdicion() {
     editandoFoto = "";
     btnGuardarTexto.innerText = "Guardar Producto";
     btnCancelar.style.display = "none";
-    document.getElementById("foto").required = false;
+    document.getElementById("foto").value = "";
 }
 
-// Eliminar producto
-function eliminarProducto(id) {
+async function eliminarProducto(id) {
     if (confirm("¿Estás seguro de eliminar este producto?")) {
-        fetch(`${API_URL}/${id}`, {
-            method: "DELETE"
-        })
-        .then(() => {
-            cargarProductos();
-            mostrarMensaje("Producto eliminado", "success");
-        })
-        .catch(error => {
+        try {
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: "DELETE"
+            });
+            
+            if (!response.ok) throw new Error("Error al eliminar");
+            
+            await cargarProductos();
+            mostrarMensaje("Producto eliminado exitosamente", "success");
+        } catch (error) {
             console.error("Error al eliminar:", error);
             mostrarMensaje("Error al eliminar el producto", "error");
-        });
+        }
     }
 }
 
-// Mostrar mensajes temporales
 function mostrarMensaje(mensaje, tipo) {
     const alertDiv = document.createElement("div");
     alertDiv.className = `alert alert-${tipo === 'success' ? 'success' : 'danger'} alert-dismissible fade show`;
@@ -479,6 +500,12 @@ function mostrarMensaje(mensaje, tipo) {
     setTimeout(() => {
         alertDiv.remove();
     }, 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 </script>
