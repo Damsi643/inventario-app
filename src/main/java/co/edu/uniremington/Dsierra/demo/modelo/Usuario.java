@@ -25,4 +25,7 @@ public class Usuario {
 
     @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "rol", nullable = false)
+    private String rol = "USER";
 }

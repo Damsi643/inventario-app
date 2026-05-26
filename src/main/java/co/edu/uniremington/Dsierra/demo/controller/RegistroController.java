@@ -38,6 +38,9 @@ public class RegistroController {
             log.error("ERROR: El nombre viene vacío");
             return "redirect:/registro?error=nombre";
         }
+
+        // Forzar rol USER para evitar auto-asignación de ADMIN
+        usuario.setRol("USER");
         
         Usuario existente = usuarioService.buscarPorCorreo(usuario.getCorreo());
         
@@ -95,6 +98,29 @@ public class RegistroController {
         } catch (Exception e) {
             return "❌ Error: " + e.getMessage();
         }
+    }
+
+    // CARGAR usuarios del JSON backup a MySQL
+    @GetMapping("/cargar-backup")
+    @ResponseBody
+    public String cargarBackup() {
+        List<Usuario> usuarios = backupService.leerTodosLosUsuarios();
+        if (usuarios.isEmpty()) {
+            return "No hay usuarios en el backup JSON";
+        }
+        int cargados = 0;
+        int saltados = 0;
+        for (Usuario u : usuarios) {
+            Usuario existente = usuarioService.buscarPorCorreo(u.getCorreo());
+            if (existente == null) {
+                if (u.getRol() == null) u.setRol("USER");
+                usuarioService.guardar(u);
+                cargados++;
+            } else {
+                saltados++;
+            }
+        }
+        return "Cargados: " + cargados + " | Ya existían: " + saltados;
     }
 
     // Endpoint de prueba

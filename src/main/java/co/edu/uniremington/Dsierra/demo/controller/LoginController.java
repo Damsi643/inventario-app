@@ -37,8 +37,8 @@ public class LoginController {
             // Guardar usuario en sesión
             session.setAttribute("usuario", usuario);
             
-            // Verificar si es admin (por correo)
-            if (correo.equals("admin@gmail.com")) {
+            // Verificar si es admin por el rol
+            if ("ADMIN".equals(usuario.getRol())) {
                 return "redirect:/dashboard";
             } else {
                 // Usuario normal → redirigir al catálogo

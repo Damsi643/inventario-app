@@ -1,6 +1,6 @@
 const contenedor = document.getElementById("contenedor-productos");
 
-fetch("http://localhost:8080/api/productos")
+fetch("/api/productos")
 
 .then(response => response.json())
 
@@ -16,7 +16,7 @@ fetch("http://localhost:8080/api/productos")
 
             <div class="product-card">
 
-                <img src="${producto.imagen}" alt="">
+                <img src="${producto.foto || 'https://via.placeholder.com/200'}" alt="">
 
                 <div class="product-info">
 

@@ -5,6 +5,7 @@ import co.edu.uniremington.Dsierra.demo.repository.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class UsuarioService {
         this.backupService = backupService;
     }
 
+    @Transactional
     public Usuario guardar(Usuario usuario) {
         Usuario guardado = usuarioRepository.save(usuario);
         log.info("✅ Usuario guardado en MariaDB - ID: {}", guardado.getId());
@@ -35,6 +37,19 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
     
+    @Transactional
+    public Usuario cambiarRol(Long id, String nuevoRol) {
+        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        if (usuario != null) {
+            usuario.setRol(nuevoRol);
+            Usuario guardado = usuarioRepository.save(usuario);
+            log.info(" Rol cambiado - ID: {}, Nuevo rol: {}", id, nuevoRol);
+            return guardado;
+        }
+        return null;
+    }
+
+    @Transactional
     public boolean eliminar(Long id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);

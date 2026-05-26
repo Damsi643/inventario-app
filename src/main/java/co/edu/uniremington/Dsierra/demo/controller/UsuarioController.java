@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -30,6 +31,20 @@ public class UsuarioController {
 
         return usuarioRepository.findAll();
 
+    }
+
+    // CAMBIAR ROL DE USUARIO
+    @PatchMapping("/{id}/rol")
+    public ResponseEntity<Usuario> cambiarRol(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String nuevoRol = body.get("rol");
+        if (nuevoRol == null || (!nuevoRol.equals("ADMIN") && !nuevoRol.equals("USER"))) {
+            return ResponseEntity.badRequest().build();
+        }
+        Usuario actualizado = usuarioService.cambiarRol(id, nuevoRol);
+        if (actualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(actualizado);
     }
 
     // ELIMINAR USUARIO

@@ -25,7 +25,11 @@ DROP TABLE IF EXISTS `productos`;
 CREATE TABLE `productos` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) DEFAULT NULL,
-  `valor` float NOT NULL,
+  `marca` varchar(255) DEFAULT NULL,
+  `descripcion` varchar(500) DEFAULT NULL,
+  `precio` float NOT NULL DEFAULT 0,
+  `stock` int NOT NULL DEFAULT 0,
+  `foto` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -36,7 +40,7 @@ CREATE TABLE `productos` (
 
 LOCK TABLES `productos` WRITE;
 /*!40000 ALTER TABLE `productos` DISABLE KEYS */;
-INSERT INTO `productos` VALUES (1,'Mouse Gamer',150000);
+INSERT INTO `productos` VALUES (1,'Mouse Gamer','Logitech','Mouse gamer con luces RGB',150000,10,NULL);
 /*!40000 ALTER TABLE `productos` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

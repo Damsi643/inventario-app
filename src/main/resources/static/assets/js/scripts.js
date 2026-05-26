@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function cargarProductos() {
-  fetch("http://localhost:8080/api/productos")
+  fetch("/api/productos")
     .then(res => res.json())
     .then(data => {
       console.log("Productos:", data);

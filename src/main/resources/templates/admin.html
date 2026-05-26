@@ -235,10 +235,33 @@ Agregar Admin
 
 </div>
 
+<div class="modal fade" id="modalAgregarAdmin" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Administrador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Selecciona un usuario para convertir en administrador:</p>
+                <select id="selectUsuario" class="form-select">
+                    <option value="">Cargando usuarios...</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" onclick="confirmarAgregarAdmin()">Hacer Admin</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 
 function cargarUsuarios() {
-    fetch("http://localhost:8081/api/usuarios")
+    fetch("/api/usuarios")
         .then(response => response.json())
         .then(usuarios => {
             const tabla = document.getElementById("tabla-admins");
@@ -253,7 +276,7 @@ function cargarUsuarios() {
             let cantidadAdmins = 0;
 
             usuarios.forEach(usuario => {
-                const esAdmin = usuario.correo === "admin@gmail.com";
+                const esAdmin = usuario.rol === "ADMIN";
                 if(esAdmin) cantidadAdmins++;
 
                 tabla.innerHTML += `
@@ -271,7 +294,16 @@ function cargarUsuarios() {
                             </span>
                         </td>
                         <td>
-                            <button class="delete" onclick="eliminarUsuario(${usuario.id})">
+                            ${esAdmin ? `
+                                <button class="delete" onclick="quitarAdmin(${usuario.id}, '${usuario.nombre}')" title="Quitar admin">
+                                    <i class="bi bi-person-dash"></i>
+                                </button>
+                            ` : `
+                                <button class="delete" onclick="hacerAdmin(${usuario.id}, '${usuario.nombre}')" title="Hacer admin">
+                                    <i class="bi bi-person-plus"></i>
+                                </button>
+                            `}
+                            <button class="delete" onclick="eliminarUsuario(${usuario.id})" title="Eliminar">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </td>
@@ -289,17 +321,90 @@ function cargarUsuarios() {
         });
 }
 
-function agregarAdmin() {
-    alert("Funcionalidad para agregar admin - Próximamente");
+function hacerAdmin(id, nombre) {
+    if(confirm(`¿Convertir a "${nombre}" en administrador?`)) {
+        fetch(`/api/usuarios/${id}/rol`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rol: "ADMIN" })
+        })
+        .then(response => {
+            if(response.ok) {
+                alert(`"${nombre}" ahora es administrador`);
+                cargarUsuarios();
+            } else {
+                alert("Error al cambiar el rol");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
 }
 
-function editarUsuario(id) {
-    alert(`Editar usuario ID: ${id} - Próximamente`);
+function quitarAdmin(id, nombre) {
+    if(confirm(`¿Quitar permisos de administrador a "${nombre}"?`)) {
+        fetch(`/api/usuarios/${id}/rol`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ rol: "USER" })
+        })
+        .then(response => {
+            if(response.ok) {
+                alert(`"${nombre}" ya no es administrador`);
+                cargarUsuarios();
+            } else {
+                alert("Error al cambiar el rol");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    }
+}
+
+function agregarAdmin() {
+    const select = document.getElementById("selectUsuario");
+    select.innerHTML = '<option value="">Cargando usuarios...</option>';
+    
+    fetch("/api/usuarios")
+        .then(response => response.json())
+        .then(usuarios => {
+            select.innerHTML = '<option value="">Selecciona un usuario</option>';
+            usuarios.forEach(u => {
+                if(u.rol !== "ADMIN") {
+                    select.innerHTML += `<option value="${u.id}">${u.nombre} (${u.correo})</option>`;
+                }
+            });
+            const modal = new bootstrap.Modal(document.getElementById("modalAgregarAdmin"));
+            modal.show();
+        })
+        .catch(error => console.error("Error:", error));
+}
+
+function confirmarAgregarAdmin() {
+    const select = document.getElementById("selectUsuario");
+    const id = select.value;
+    if(!id) {
+        alert("Selecciona un usuario");
+        return;
+    }
+    fetch(`/api/usuarios/${id}/rol`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rol: "ADMIN" })
+    })
+    .then(response => {
+        if(response.ok) {
+            bootstrap.Modal.getInstance(document.getElementById("modalAgregarAdmin")).hide();
+            alert("Usuario promovido a administrador");
+            cargarUsuarios();
+        } else {
+            alert("Error al cambiar el rol");
+        }
+    })
+    .catch(error => console.error("Error:", error));
 }
 
 function eliminarUsuario(id) {
     if(confirm(`¿Eliminar usuario ID: ${id}?`)) {
-        fetch(`http://localhost:8081/api/usuarios/${id}`, {
+        fetch(`/api/usuarios/${id}`, {
             method: "DELETE"
         })
         .then(() => {

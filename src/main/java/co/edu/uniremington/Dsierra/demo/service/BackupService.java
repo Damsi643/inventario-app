@@ -18,8 +18,7 @@ public class BackupService {
 
     private static final Logger log = LoggerFactory.getLogger(BackupService.class);
     
-    // 👈 CAMBIA EL NOMBRE AQUÍ
-private static final String JSON_FILE_PATH = "backup/usuarios.json";  // Guarda en carpeta backup
+    private static final String JSON_FILE_PATH = "usuarios.json";
     
     private final ObjectMapper objectMapper;
 

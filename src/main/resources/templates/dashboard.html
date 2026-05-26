@@ -268,7 +268,7 @@ Cancelar
 
 <script>
 
-const API_URL = "http://localhost:8081/api/productos";
+const API_URL = "/api/productos";
 const tabla = document.getElementById("tabla-productos");
 const form = document.getElementById("formProducto");
 const btnGuardarTexto = document.getElementById("btnGuardarTexto");
@@ -347,7 +347,7 @@ function actualizarEstadisticas(productos) {
 }
 
 // Guardar o actualizar producto
-const UPLOAD_URL = "http://localhost:8081/api/upload";
+const UPLOAD_URL = "/api/upload";
 let editandoFoto = "";
 
 form.addEventListener("submit", async function(e) {

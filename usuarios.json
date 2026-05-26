@@ -2,30 +2,42 @@
   "id" : 1,
   "nombre" : "Prueba Directa",
   "correo" : "prueba@directa.com",
-  "password" : "123456"
+  "password" : "123456",
+  "rol" : "USER"
 }, {
   "id" : 2,
   "nombre" : "Daniela",
   "correo" : "daniela@gmail.com",
-  "password" : "2006"
+  "password" : "2006",
+  "rol" : "USER"
 }, {
   "id" : 3,
   "nombre" : "Usuario Test",
   "correo" : "test@test.com",
-  "password" : "123456"
+  "password" : "123456",
+  "rol" : "USER"
 }, {
   "id" : 4,
   "nombre" : "jose",
   "correo" : "jose@gmail.com",
-  "password" : "2727"
+  "password" : "2727",
+  "rol" : "USER"
 }, {
   "id" : 6,
   "nombre" : "kate",
   "correo" : "kate@gmail.com",
-  "password" : "3232"
+  "password" : "3232",
+  "rol" : "USER"
 }, {
   "id" : 7,
   "nombre" : "santiago",
   "correo" : "santiago@gmail.com",
-  "password" : "2004"
+  "password" : "2004",
+  "rol" : "USER"
+}, {
+  "id" : 8,
+  "nombre" : "Admin",
+  "correo" : "admin@gmail.com",
+  "password" : "admin123",
+  "rol" : "ADMIN"
 } ]

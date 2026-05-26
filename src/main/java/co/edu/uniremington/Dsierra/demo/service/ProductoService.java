@@ -4,6 +4,7 @@ import co.edu.uniremington.Dsierra.demo.modelo.Producto;
 import co.edu.uniremington.Dsierra.demo.repository.ProductoRepository;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +32,13 @@ public class ProductoService {
     }
 
     // CREAR
+    @Transactional
     public Producto guardar(Producto producto) {
         return productos.save(producto);
     }
 
     // ACTUALIZAR
+    @Transactional
     public Producto actualizar(Long id, Producto nuevoProducto) {
 
         Producto producto = productos.findById(id).orElse(null);
@@ -45,7 +48,10 @@ public class ProductoService {
         }
 
         producto.setNombre(nuevoProducto.getNombre());
-        producto.setValor(nuevoProducto.getValor());
+        producto.setPrecio(nuevoProducto.getPrecio());
+        producto.setMarca(nuevoProducto.getMarca());
+        producto.setDescripcion(nuevoProducto.getDescripcion());
+        producto.setStock(nuevoProducto.getStock());
         if (nuevoProducto.getFoto() != null) {
             producto.setFoto(nuevoProducto.getFoto());
         }
@@ -54,6 +60,7 @@ public class ProductoService {
     }
 
     // ELIMINAR
+    @Transactional
     public boolean eliminar(Long id) {
 
         Producto producto = productos.findById(id).orElse(null);
