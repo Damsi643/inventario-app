@@ -5,7 +5,8 @@ import co.edu.uniremington.Dsierra.demo.service.ProductoService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import java.util.List;
 
 public class ProductoController {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductoController.class);
     private final ProductoService productoService;
 
     public ProductoController(ProductoService productoService) {
@@ -57,7 +59,12 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<Producto> crear(@RequestBody Producto producto) {
 
+        logger.info("=== LLEGÓ POST a /api/productos === nombre={}, precio={}, stock={}",
+                producto.getNombre(), producto.getPrecio(), producto.getStock());
+
         Producto nuevo = productoService.guardar(producto);
+
+        logger.info("Producto guardado exitosamente - ID: {}", nuevo.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }

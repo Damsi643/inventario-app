@@ -398,14 +398,24 @@ form.addEventListener("submit", async function(e) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(producto)
         })
-        .then(response => response.json())
+        .then(async response => {
+            if (!response.ok) {
+                const text = await response.text();
+                console.error("POST /api/productos falló - Status:", response.status, "Body:", text.substring(0, 200));
+                throw new Error("HTTP " + response.status);
+            }
+            return response.json();
+        })
         .then(() => {
             form.reset();
             editandoFoto = "";
             cargarProductos();
             mostrarMensaje("Producto guardado exitosamente", "success");
         })
-        .catch(() => mostrarMensaje("Error al guardar el producto", "error"));
+        .catch(err => {
+            console.error("Error al guardar producto:", err.message);
+            mostrarMensaje("Error al guardar el producto", "error");
+        });
     }
 });
 

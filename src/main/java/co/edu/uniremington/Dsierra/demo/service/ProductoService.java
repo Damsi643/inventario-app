@@ -3,6 +3,8 @@ package co.edu.uniremington.Dsierra.demo.service;
 import co.edu.uniremington.Dsierra.demo.modelo.Producto;
 import co.edu.uniremington.Dsierra.demo.repository.ProductoRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +14,7 @@ import java.util.Optional;
 @Service
 public class ProductoService {
 
+    private static final Logger logger = LoggerFactory.getLogger(ProductoService.class);
     private final ProductoRepository productos;
 
     public ProductoService(ProductoRepository productos) {
@@ -34,7 +37,15 @@ public class ProductoService {
     // CREAR
     @Transactional
     public Producto guardar(Producto producto) {
-        return productos.save(producto);
+        logger.info("ProductoService.guardar() llamado - nombre: {}", producto.getNombre());
+        try {
+            Producto resultado = productos.save(producto);
+            logger.info("ProductoService.guardar() EXITOSO - ID: {}", resultado.getId());
+            return resultado;
+        } catch (Exception e) {
+            logger.error("ProductoService.guardar() falló - Error: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 
     // ACTUALIZAR
