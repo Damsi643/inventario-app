@@ -18,6 +18,10 @@ public class AuthInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String path = request.getRequestURI();
 
+        if (path.startsWith("/api/productos") && method.equals("GET")) {
+            return true;
+        }
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuario") == null) {
             logger.warn("Petición {} a {} bloqueada - sesión no válida", method, path);
