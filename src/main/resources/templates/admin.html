@@ -279,10 +279,15 @@ function cargarUsuarios() {
                 const esAdmin = usuario.rol === "ADMIN";
                 if(esAdmin) cantidadAdmins++;
 
+                const nombreSeguro = escapeHtml(String(usuario.nombre || ''));
+                const correoSeguro = escapeHtml(String(usuario.correo || ''));
+                const nombreQuitar = nombreSeguro.replace(/'/g, "\\'");
+                const nombreHacer = nombreSeguro.replace(/'/g, "\\'");
+
                 tabla.innerHTML += `
                     <tr>
-                        <td><strong>${usuario.nombre}</strong></td>
-                        <td>${usuario.correo}</td>
+                        <td><strong>${nombreSeguro}</strong></td>
+                        <td>${correoSeguro}</td>
                         <td>
                             <span class="badge ${esAdmin ? 'bg-danger' : 'bg-primary'}">
                                 ${esAdmin ? "Administrador" : "Usuario"}
@@ -295,11 +300,11 @@ function cargarUsuarios() {
                         </td>
                         <td>
                             ${esAdmin ? `
-                                <button class="delete" onclick="quitarAdmin(${usuario.id}, '${usuario.nombre}')" title="Quitar admin">
+                                <button class="delete" onclick="quitarAdmin(${usuario.id}, '${nombreQuitar}')" title="Quitar admin">
                                     <i class="bi bi-person-dash"></i>
                                 </button>
                             ` : `
-                                <button class="delete" onclick="hacerAdmin(${usuario.id}, '${usuario.nombre}')" title="Hacer admin">
+                                <button class="delete" onclick="hacerAdmin(${usuario.id}, '${nombreHacer}')" title="Hacer admin">
                                     <i class="bi bi-person-plus"></i>
                                 </button>
                             `}
@@ -369,7 +374,7 @@ function agregarAdmin() {
             select.innerHTML = '<option value="">Selecciona un usuario</option>';
             usuarios.forEach(u => {
                 if(u.rol !== "ADMIN") {
-                    select.innerHTML += `<option value="${u.id}">${u.nombre} (${u.correo})</option>`;
+                    select.innerHTML += `<option value="${u.id}">${escapeHtml(u.nombre)} (${escapeHtml(u.correo)})</option>`;
                 }
             });
             const modal = new bootstrap.Modal(document.getElementById("modalAgregarAdmin"));
@@ -400,6 +405,12 @@ function confirmarAgregarAdmin() {
         }
     })
     .catch(error => console.error("Error:", error));
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 function eliminarUsuario(id) {
