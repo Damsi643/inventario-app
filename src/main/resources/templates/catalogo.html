@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 <meta charset="UTF-8">
@@ -79,8 +79,28 @@ data-bs-target="#menu">
 <span class="cart-badge" id="cartBadge">0</span>
 </div>
 
-<a href="/login" class="text-decoration-none text-dark">
-<i class="bi bi-person-circle nav-icon"></i>
+<!-- USUARIO: LOGIN / LOGOUT -->
+<div class="dropdown" th:if="${loggedIn}">
+  <button class="btn dropdown-toggle user-btn" type="button" data-bs-toggle="dropdown">
+    <i class="bi bi-person-circle nav-icon"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><span class="dropdown-item-text text-muted" th:text="${userName}">Usuario</span></li>
+    <li><hr class="dropdown-divider"></li>
+    <li th:if="${userRol == 'ADMIN'}">
+      <a class="dropdown-item" href="/dashboard">
+        <i class="bi bi-grid-fill"></i> Dashboard
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="/logout">
+        <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+      </a>
+    </li>
+  </ul>
+</div>
+<a th:unless="${loggedIn}" href="/login" class="text-decoration-none text-dark" style="font-size:0;">
+  <i class="bi bi-person-circle nav-icon"></i>
 </a>
 
 </div>
