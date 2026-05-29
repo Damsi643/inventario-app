@@ -18,12 +18,6 @@ public class AuthInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String path = request.getRequestURI();
 
-        // Permitir GET, POST, PUT, DELETE a /api/productos sin autenticación
-        if (path.equals("/api/productos") && (method.equals("GET") || method.equals("POST") || method.equals("PUT") || method.equals("DELETE"))) {
-            logger.info("Petición {} a {} - permitida sin autenticación", method, path);
-            return true;
-        }
-
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("usuario") == null) {
             logger.warn("Petición {} a {} bloqueada - sesión no válida", method, path);

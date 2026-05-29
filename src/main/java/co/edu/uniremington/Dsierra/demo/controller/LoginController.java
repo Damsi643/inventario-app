@@ -2,6 +2,7 @@ package co.edu.uniremington.Dsierra.demo.controller;
 
 import co.edu.uniremington.Dsierra.demo.modelo.Usuario;
 import co.edu.uniremington.Dsierra.demo.service.UsuarioService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,9 +14,11 @@ import jakarta.servlet.http.HttpSession;
 public class LoginController {
 
     private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
 
-    public LoginController(UsuarioService usuarioService) {
+    public LoginController(UsuarioService usuarioService, PasswordEncoder passwordEncoder) {
         this.usuarioService = usuarioService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/login")
@@ -28,24 +31,28 @@ public class LoginController {
             @RequestParam("correo") String correo,
             @RequestParam("password") String password,
             HttpSession session) {
-        
-        // Buscar usuario por correo
+
         Usuario usuario = usuarioService.buscarPorCorreo(correo);
-        
-        // Verificar si existe y la contraseña es correcta
-        if (usuario != null && usuario.getPassword().equals(password)) {
-            // Guardar usuario en sesión
+
+        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
             session.setAttribute("usuario", usuario);
-            
-            // Verificar si es admin por el rol
+
             if ("ADMIN".equals(usuario.getRol())) {
                 return "redirect:/dashboard";
             } else {
-                // Usuario normal → redirigir al catálogo
+                return "redirect:/catalogo";
+            }
+        } else if (usuario != null && usuario.getPassword().equals(password)) {
+            usuario.setPassword(passwordEncoder.encode(password));
+            usuarioService.guardar(usuario);
+            session.setAttribute("usuario", usuario);
+
+            if ("ADMIN".equals(usuario.getRol())) {
+                return "redirect:/dashboard";
+            } else {
                 return "redirect:/catalogo";
             }
         } else {
-            // Credenciales incorrectas
             return "redirect:/login?error=true";
         }
     }

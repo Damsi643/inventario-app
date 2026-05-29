@@ -1,25 +1,22 @@
 package co.edu.uniremington.Dsierra.demo.controller;
 
 import co.edu.uniremington.Dsierra.demo.modelo.Usuario;
-import co.edu.uniremington.Dsierra.demo.service.BackupService;
 import co.edu.uniremington.Dsierra.demo.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class RegistroController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistroController.class);
     private final UsuarioService usuarioService;
-    private final BackupService backupService;
 
-    public RegistroController(UsuarioService usuarioService, BackupService backupService) {
+    public RegistroController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
-        this.backupService = backupService;
     }
 
     @GetMapping("/registro")
@@ -59,91 +56,5 @@ public class RegistroController {
         }
     }
 
-    // ========== ENDPOINTS PARA JSON BACKUP ==========
 
-    @GetMapping("/estadisticas")
-    @ResponseBody
-    public String estadisticas() {
-        return usuarioService.getEstadisticas();
-    }
-
-    @GetMapping("/ver-backup")
-    @ResponseBody
-    public String verBackup() {
-        List<Usuario> usuarios = backupService.leerTodosLosUsuarios();
-        if (usuarios.isEmpty()) {
-            return "📁 No hay usuarios en el backup JSON aún";
-        }
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append("📁 BACKUP JSON - Usuarios guardados:\n\n");
-        for (Usuario u : usuarios) {
-            sb.append("• ID: ").append(u.getId())
-              .append(" | Nombre: ").append(u.getNombre())
-              .append(" | Correo: ").append(u.getCorreo())
-              .append(" | Password: ").append(u.getPassword()).append("\n");
-        }
-        sb.append("\n📂 Ubicación: ").append(System.getProperty("user.dir")).append("/usuarios.json");
-        return sb.toString();
-    }
-
-    @GetMapping("/sincronizar-total")
-    @ResponseBody
-    public String sincronizarTotal() {
-        try {
-            List<Usuario> todos = usuarioService.obtenerTodos();
-            backupService.guardarTodosUsuariosEnJson(todos);
-            return "✅ Sincronización completada. " + todos.size() + " usuarios guardados en JSON.\n" +
-                   "📊 MariaDB: " + todos.size() + " usuarios | 💾 JSON Backup: " + todos.size() + " usuarios";
-        } catch (Exception e) {
-            return "❌ Error: " + e.getMessage();
-        }
-    }
-
-    // CARGAR usuarios del JSON backup a MySQL
-    @GetMapping("/cargar-backup")
-    @ResponseBody
-    public String cargarBackup() {
-        List<Usuario> usuarios = backupService.leerTodosLosUsuarios();
-        if (usuarios.isEmpty()) {
-            return "No hay usuarios en el backup JSON";
-        }
-        int cargados = 0;
-        int saltados = 0;
-        for (Usuario u : usuarios) {
-            Usuario existente = usuarioService.buscarPorCorreo(u.getCorreo());
-            if (existente == null) {
-                if (u.getRol() == null) u.setRol("USER");
-                usuarioService.guardar(u);
-                cargados++;
-            } else {
-                saltados++;
-            }
-        }
-        return "Cargados: " + cargados + " | Ya existían: " + saltados;
-    }
-
-    // Endpoint de prueba
-    @GetMapping("/test/guardar")
-    @ResponseBody
-    public String testGuardar() {
-        try {
-            Usuario existente = usuarioService.buscarPorCorreo("test@test.com");
-            if (existente != null) {
-                return "⚠️ El usuario test@test.com ya existe con ID: " + existente.getId();
-            }
-            
-            Usuario usuario = new Usuario();
-            usuario.setNombre("Usuario Test");
-            usuario.setCorreo("test@test.com");
-            usuario.setPassword("123456");
-            
-            Usuario guardado = usuarioService.guardar(usuario);
-            return "✅ Usuario guardado con éxito! ID: " + guardado.getId();
-        } catch (Exception e) {
-            return "❌ Error: " + e.getMessage();
-        }
-    }
-
-    
 }

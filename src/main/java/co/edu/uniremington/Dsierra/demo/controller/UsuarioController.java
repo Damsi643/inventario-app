@@ -13,8 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/usuarios")
 
-@CrossOrigin("*")
-
 public class UsuarioController {
 
     private final UsuarioRepository usuarioRepository;
