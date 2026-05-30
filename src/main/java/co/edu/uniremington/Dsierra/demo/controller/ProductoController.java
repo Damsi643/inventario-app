@@ -83,7 +83,7 @@ public class ProductoController {
         }
 
         return ResponseEntity.ok(actualizado);
-    }
+    } 
 
     // ELIMINAR
     @Operation(summary = "Eliminar un producto")
